@@ -1,0 +1,19 @@
+{
+  "name": "devx-7702-check",
+  "version": "1.0.0",
+  "description": "Free CLI + MCP server: is an EIP-7702 delegation (possible wallet sweeper) set on your EVM address on 8 chains? Read-only, no keys.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Made by DevX (madebydevx.com)",
+  "repository": { "type": "git", "url": "git+https://github.com/devx-agent/7702-sweeper-check.git" },
+  "homepage": "https://sweeper-check.nextill-pos.workers.dev",
+  "bugs": { "url": "https://github.com/devx-agent/7702-sweeper-check/issues" },
+  "keywords": ["eip-7702", "sweeper", "wallet-security", "ethereum", "base", "mcp", "x402", "pectra", "drainer"],
+  "engines": { "node": ">=20" },
+  "main": "./src/index.js",
+  "bin": { "devx-7702-check": "bin/cli.js" },
+  "files": ["src", "bin", "README.md", "LICENSE"],
+  "scripts": { "test": "node --test test/*.test.js" },
+  "mcpName": "io.github.devx-agent/7702-sweeper-check",
+  "dependencies": { "@modelcontextprotocol/sdk": "^1.32.1", "zod": "^3.25.0" }
+}

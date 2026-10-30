@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Is your wallet swept? EIP-7702 Sweeper Check · Made by DevX</title>
+<meta name="description" content="Free check: does your EVM wallet have an EIP-7702 delegation on Ethereum, Base, BSC, Arbitrum, OP, Polygon, Gnosis or Unichain? Full sweeper analysis for 0.01 USDC.">
+<meta property="og:title" content="EIP-7702 Sweeper Check"><meta property="og:description" content="Paste an address. See if a 7702 delegation (the trick behind wallet sweepers) is set on 8 chains. Read-only. No keys, no seed phrase.">
+<style>
+:root{--bg:#0b0d0c;--ink:#e9efe8;--mut:#8a958c;--line:#232a25;--acc:#c6ff3d;--red:#ff5a4e;--amb:#ffb13d;--ok:#5be39a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.w{max-width:860px;margin:0 auto;padding:40px 20px 80px}
+.tag{font:12px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--acc)}
+h1{font-size:clamp(34px,6vw,58px);line-height:1.02;margin:14px 0 14px;letter-spacing:-.03em;font-weight:800}
+h1 em{font-style:normal;color:var(--acc)}
+p.lead{color:var(--mut);max-width:620px;margin:0 0 28px}
+form{display:flex;gap:10px;flex-wrap:wrap}
+input{flex:1;min-width:260px;background:#121614;border:1px solid var(--line);color:var(--ink);padding:15px 16px;border-radius:10px;font:15px ui-monospace,Menlo,monospace}
+input:focus{outline:none;border-color:var(--acc)}
+button{background:var(--acc);color:#0b0d0c;border:0;padding:15px 22px;border-radius:10px;font-weight:800;cursor:pointer;font-size:15px}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button:disabled{opacity:.5;cursor:wait}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:26px}
+.c{border:1px solid var(--line);border-radius:12px;padding:14px;background:#0f1311}
+.c b{display:block;font-size:14px}.c .s{font:12px ui-monospace,Menlo,monospace;color:var(--mut);word-break:break-all;margin-top:6px}
+.c.del{border-color:var(--amb)}.c.del b{color:var(--amb)}.c.err b{color:var(--mut)}
+.c.high{border-color:var(--red)}.c.high b{color:var(--red)}.c.low b{color:var(--ok)}
+.pill{display:inline-block;font:11px ui-monospace,monospace;padding:2px 8px;border-radius:99px;border:1px solid currentColor;margin-top:8px}
+.box{margin-top:22px;border:1px solid var(--line);border-radius:12px;padding:18px;background:#0f1311}
+.box h3{margin:0 0 6px;font-size:17px}.mut{color:var(--mut);font-size:14px}
+.f{font-size:14px;margin:6px 0;padding-left:12px;border-left:2px solid var(--line)}.f.danger{border-color:var(--red)}.f.warn{border-color:var(--amb)}
+pre{white-space:pre-wrap;word-break:break-all;font:12px ui-monospace,monospace;color:var(--mut);max-height:320px;overflow:auto}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:48px;border-top:1px solid var(--line);padding-top:28px}
+.how h4{margin:0 0 6px;font-size:15px}.how p{margin:0;color:var(--mut);font-size:14px}
+footer{margin-top:48px;color:var(--mut);font-size:13px}footer a{color:var(--ink)}
+code{font:13px ui-monospace,monospace;color:var(--acc)}
+</style></head><body><div class="w">
+<div class="tag">EIP-7702 · 8 chains · read-only</div>
+<h1>Is a <em>sweeper</em> sitting on your wallet?</h1>
+<p class="lead">Since Pectra, one signature can attach code to a normal wallet (EIP-7702). Attackers use that to install "sweepers" that forward anything you send to their address. Paste an address to see whether a delegation is set on Ethereum, Base, BNB Chain, Arbitrum, OP, Polygon, Gnosis and Unichain. <b>Free.</b> We never ask for keys or seed phrases.</p>
+<form id="f"><input id="a" placeholder="0x… wallet address" autocomplete="off" spellcheck="false"><button id="go">Check free</button></form>
+<div id="out"></div>
+<div class="how">
+<div><h4>Free check</h4><p>Reads <code>eth_getCode</code> on 8 chains. A delegated wallet's code starts with <code>0xef0100</code> followed by the delegate contract address.</p></div>
+<div><h4>Full report · 0.01 USDC</h4><p>Analyses the delegate's bytecode for the sweeper shape (tiny contract + hard-coded forwarding address), checks source verification, gives a risk level and what to do. Up to 20 addresses per report. Paid with USDC on Base from your browser wallet, no gas.</p></div>
+<div><h4>For agents</h4><p><code>GET /api/basic?address=</code> free JSON. <code>GET /v1/check?address=a,b,c</code> via x402 v2 (USDC on Base). See <a href="/openapi.json" style="color:var(--ink)">openapi.json</a>.</p></div>
+</div>
+<footer>Heuristic analysis of public chain data, not a guarantee. If a delegation you did not set shows up, treat the key as compromised and move funds to a new wallet made on a clean device. · <a href="/terms">Terms</a> · Made by <a href="https://madebydevx.com">DevX</a> · payments go to <span style="font-family:ui-monospace,monospace">__PAYTO__</span></footer>
+</div>
+<script>
+const $=s=>document.querySelector(s),out=$("#out");let last="";
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const short=a=>a?a.slice(0,8)+"…"+a.slice(-6):"";
+$("#f").onsubmit=async e=>{e.preventDefault();const a=$("#a").value.trim();if(!/^0x[0-9a-fA-F]{40}$/.test(a)){out.innerHTML='<div class="box"><h3>That is not an EVM address</h3><p class="mut">Expected 0x followed by 40 hex characters.</p></div>';return}
+last=a;$("#go").disabled=true;out.innerHTML='<div class="box mut">Checking 8 chains…</div>';
+try{const r=await (await fetch("/api/basic?address="+a)).json();if(r.error)throw new Error(r.error);renderBasic(r)}catch(err){out.innerHTML='<div class="box">Error: '+esc(err.message)+'</div>'}$("#go").disabled=false};
+function renderBasic(r){const d=r.delegated_on.length;
+let h='<div class="box"><h3>'+(d?'Delegation found on '+d+' chain'+(d>1?'s':''):'No EIP-7702 delegation found')+'</h3><p class="mut">'+(d?'A delegation is not automatically bad: smart-wallet upgrades (MetaMask, Coinbase, Ambire…) use it too. The full report checks whether the delegate looks like a sweeper.':'This address has no 7702 code on the chains checked. Stay careful with what you sign.')+'</p>'+(d?'<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap"><button id="pay">Full report · 0.01 USDC</button></div><p class="mut" id="pst" style="margin:8px 0 0"></p>':'')+'</div><div class="grid">';
+for(const c of r.chains){h+='<div class="c '+(c.error?'err':c.delegated?'del':'')+'"><b>'+esc(c.name)+'</b><div class="s">'+(c.error?'rpc unavailable':c.delegated?'delegated → '+esc(short(c.delegate)):c.kind==="contract"?'contract account':'plain wallet · nonce '+c.nonce)+'</div></div>'}
+out.innerHTML=h+'</div>';if(d)$("#pay").onclick=payFull}
+const b64e=o=>btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(o))));
+const b64d=s=>JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(s),c=>c.charCodeAt(0))));
+async function payFull(){const st=$("#pst"),btn=$("#pay");
+if(!window.ethereum){st.textContent="No browser wallet found. Install MetaMask/Coinbase Wallet/Rabby, or use the API with an x402 client.";return}
+btn.disabled=true;try{
+const u="/v1/check?address="+last;const r0=await fetch(u);const pr=b64d(r0.headers.get("PAYMENT-REQUIRED"));const a=pr.accepts[0];
+if(a.payTo.toLowerCase()!=="__PAYTO__".toLowerCase()||a.amount!=="10000")throw new Error("unexpected payment terms");
+st.textContent="Connect wallet…";const [from]=await ethereum.request({method:"eth_requestAccounts"});
+try{await ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x2105"}]})}catch(e){throw new Error("Please switch your wallet to Base")}
+const now=Math.floor(Date.now()/1000),nonce="0x"+[...crypto.getRandomValues(new Uint8Array(32))].map(b=>b.toString(16).padStart(2,"0")).join("");
+const auth={from,to:a.payTo,value:a.amount,validAfter:String(now-60),validBefore:String(now+600),nonce};
+const typed={types:{EIP712Domain:[{name:"name",type:"string"},{name:"version",type:"string"},{name:"chainId",type:"uint256"},{name:"verifyingContract",type:"address"}],TransferWithAuthorization:[{name:"from",type:"address"},{name:"to",type:"address"},{name:"value",type:"uint256"},{name:"validAfter",type:"uint256"},{name:"validBefore",type:"uint256"},{name:"nonce",type:"bytes32"}]},primaryType:"TransferWithAuthorization",domain:{name:a.extra.name,version:a.extra.version,chainId:8453,verifyingContract:a.asset},message:auth};
+st.textContent="Sign the 0.01 USDC authorization in your wallet (no gas)…";
+const signature=await ethereum.request({method:"eth_signTypedData_v4",params:[from,JSON.stringify(typed)]});
+st.textContent="Analysing & settling…";
+const r=await fetch(u,{headers:{"PAYMENT-SIGNATURE":b64e({x402Version:2,resource:pr.resource,accepted:a,payload:{signature,authorization:auth}})}});
+const j=await r.json();if(!r.ok)throw new Error(j.error||("HTTP "+r.status));renderFull(j)}catch(e){st.textContent="Not completed: "+(e.message||e)+" (you were not charged unless a tx hash is shown)";btn.disabled=false}}
+function renderFull(j){const r=j.reports[0];const col={high:"var(--red)",medium:"var(--amb)",low:"var(--ok)",unknown:"var(--mut)",none:"var(--ok)"}[r.overall_risk];
+let h='<div class="box"><div class="tag" style="color:'+col+'">overall risk: '+esc(r.overall_risk)+'</div><h3 style="margin-top:8px">'+esc(r.advice)+'</h3>';
+for(const c of r.chains.filter(c=>c.assessment)){h+='<div style="margin-top:14px"><b>'+esc(c.name)+'</b> → <code>'+esc(c.delegate)+'</code> <span class="pill" style="color:'+({high:"var(--red)",medium:"var(--amb)",low:"var(--ok)"}[c.assessment.risk]||"var(--mut)")+'">'+esc(c.assessment.risk)+'</span>'+(c.delegate_meta&&c.delegate_meta.name?' <span class="mut">'+esc(c.delegate_meta.name)+'</span>':'');
+for(const f of c.assessment.findings)h+='<div class="f '+f.level+'">'+esc(f.message)+'</div>';h+='</div>'}
+h+='<p class="mut" style="margin-top:14px">'+esc(r.disclaimer)+(j.payment&&j.payment.tx?' · Paid: <a style="color:var(--ink)" href="https://basescan.org/tx/'+esc(j.payment.tx)+'">'+esc(short(j.payment.tx))+'</a>':'')+'</p><details><summary class="mut">raw JSON</summary><pre>'+esc(JSON.stringify(j,null,1))+'</pre></details></div>';
+out.innerHTML=h+out.innerHTML.replace(/<div class="box">[\s\S]*?<\/div><div class="grid">/,'<div class="grid">')}
+</script></body></html>
