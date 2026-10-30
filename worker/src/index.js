@@ -1,5 +1,6 @@
 import { basic, full, isAddr, CHAINS } from "./core.js";
 import PAGE from "./page.html";
+import EXPLAINER from "./explainer.html";
 import { mcp } from "./mcp.js";
 
 const VERSION = "1.1.0";
@@ -17,10 +18,12 @@ const unb64 = (s) => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(s.
 const EXAMPLE = { address: "0x75e732608bc17b23d01f01728562ee844196dcc3", delegated_on: ["ethereum", "base"], overall_risk: "medium", chains: [{ chain: "base", delegated: true, delegate: "0x78608e7a956fe1ca4af4a31138fd67779b08f9b5", assessment: { risk: "unknown", findings: [{ level: "info", code: "no_sweeper_pattern" }], bytecode_size: 11603 } }], advice: "..." };
 
 function requirements() { return { scheme: "exact", network: "eip155:8453", amount: PRICE, asset: USDC_BASE, payTo: PAY_TO, maxTimeoutSeconds: 120, extra: { name: "USD Coin", version: "2" } }; }
-function paymentRequired(origin, error) {
+function advertised(resUrl) { return { ...requirements(), maxAmountRequired: PRICE, resource: resUrl, description: DESC, mimeType: "application/json" }; }
+function paymentRequired(origin, error, resUrl) {
+  resUrl = resUrl || origin + ROUTE;
   return { x402Version: 2, error: error || "PAYMENT-SIGNATURE header is required",
-    resource: { url: origin + ROUTE, description: DESC, mimeType: "application/json", serviceName: SERVICE, tags: ["security", "eip-7702", "wallet", "agents", "x402"] },
-    accepts: [requirements()],
+    resource: { url: resUrl, description: DESC, mimeType: "application/json", serviceName: SERVICE, tags: ["security", "eip-7702", "wallet", "agents", "x402"] },
+    accepts: [advertised(resUrl)],
     extensions: { bazaar: { info: { input: { type: "http", method: "GET", queryParams: { address: EXAMPLE.address } }, output: { type: "json", example: EXAMPLE } },
       schema: { $schema: "https://json-schema.org/draft/2020-12/schema", type: "object", properties: { input: { type: "object", properties: { type: { type: "string", const: "http" }, method: { type: "string", enum: ["GET"] }, queryParams: { type: "object", properties: { address: { type: "string", description: "one 0x address or up to 20 comma-separated" } }, required: ["address"] } }, required: ["type", "method"] }, output: { type: "object" } }, required: ["input"] } } } };
 }
@@ -61,8 +64,22 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { headers: { ...H, "access-control-allow-headers": "*", "access-control-allow-methods": "GET, HEAD, POST, OPTIONS" } });
     if (p === "/" ) return new Response(PAGE.replaceAll("__PAYTO__", PAY_TO), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
     if (p === "/index.json") return J({ service: SERVICE, version: VERSION, by: "Made by DevX (madebydevx.com)", free: origin + "/api/basic?address=0x...", paid: origin + ROUTE + "?address=0x...", price_usdc: 0.01, protocol: "x402 v2 exact, USDC on Base", payTo: PAY_TO, docs: origin + "/openapi.json", terms: origin + "/terms", description: DESC });
+    if (p === "/what-is-an-eip-7702-sweeper" || p === "/what-is-an-eip-7702-sweeper/") return new Response(EXPLAINER, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=3600" } });
+    if (p === "/robots.txt") return new Response("User-agent: *\nAllow: /\nSitemap: https://sweeper-check.nextill-pos.workers.dev/sitemap.xml\n", { headers: { "content-type": "text/plain" } });
+    if (p === "/sitemap.xml") return new Response('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://sweeper-check.nextill-pos.workers.dev/</loc><lastmod>2026-10-30</lastmod></url><url><loc>https://sweeper-check.nextill-pos.workers.dev/what-is-an-eip-7702-sweeper</loc><lastmod>2026-10-30</lastmod></url></urlset>', { headers: { "content-type": "application/xml" } });
+    if (p === "/llms.txt") return new Response(`# DevX 7702 Sweeper Check
+> Free check whether an EVM address has an EIP-7702 delegation (wallet sweeper) on 8 chains. Paid full report 0.01 USDC via x402 on Base.
+- Explainer: https://sweeper-check.nextill-pos.workers.dev/what-is-an-eip-7702-sweeper
+- Free API: GET /api/basic?address=0x...
+- Paid API (x402): GET /v1/check?address=0x...,0x...
+- MCP: https://sweeper-check.nextill-pos.workers.dev/mcp
+- OpenAPI: /openapi.json
+- Source: https://github.com/devx-agent/7702-sweeper-check
+- Related: https://crypto-link-check.nextill-pos.workers.dev/how-to-spot-fake-crypto-links
+`, { headers: { "content-type": "text/plain; charset=utf-8" } });
     if (p === "/terms") return new Response(TERMS, { headers: { "content-type": "text/plain; charset=utf-8", "access-control-allow-origin": "*" } });
     if (p === "/openapi.json") return J(docs(origin));
+    if (p === "/.well-known/agent-tools-verify.txt") return new Response("atc_rZEoWe2lFdc8Gb39Ret-8EAAmVj0k-k-\n", { headers: { "content-type": "text/plain" } });
     if (p === "/.well-known/x402") return J({ version: 1, resources: [origin + ROUTE], description: SERVICE });
     if (p === "/.well-known/x402.json") return J({ x402Version: 2, name: SERVICE, provider: "Made by DevX (madebydevx.com)", resources: [{ url: origin + ROUTE, method: "GET", description: DESC, accepts: [requirements()] }] });
     if (p === "/mcp") return mcp(req, origin);
@@ -75,7 +92,7 @@ export default {
     }
     if (p !== ROUTE) return J({ error: "not found", see: origin + "/index.json" }, 404);
     if (req.method !== "GET" && req.method !== "HEAD") return J({ error: "use GET" }, 405);
-    const pr = paymentRequired(origin);
+    const pr = paymentRequired(origin, null, origin + ROUTE + url.search);
     const parsed = parseAddrs(url.searchParams.get("address"));
     const sig = req.headers.get("PAYMENT-SIGNATURE") || req.headers.get("X-PAYMENT");
     if (!sig) return J(pr, 402, { "PAYMENT-REQUIRED": b64(pr) });

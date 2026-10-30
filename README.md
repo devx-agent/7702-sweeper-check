@@ -50,3 +50,8 @@ Tools: `check_7702_delegation(address)`, `full_report_info()`.
 - `cli/`: the npm package `devx-7702-check` (CLI + stdio MCP server)
 
 Made by [DevX](https://madebydevx.com). MIT.
+
+## Guide
+
+- [What is an EIP-7702 sweeper?](https://sweeper-check.nextill-pos.workers.dev/what-is-an-eip-7702-sweeper)
+- Related free tool: [Crypto Link Check](https://crypto-link-check.nextill-pos.workers.dev/) — is that wallet or exchange link real?

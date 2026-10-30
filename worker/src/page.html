@@ -30,7 +30,7 @@ pre{white-space:pre-wrap;word-break:break-all;font:12px ui-monospace,monospace;c
 .how h4{margin:0 0 6px;font-size:15px}.how p{margin:0;color:var(--mut);font-size:14px}
 footer{margin-top:48px;color:var(--mut);font-size:13px}footer a{color:var(--ink)}
 code{font:13px ui-monospace,monospace;color:var(--acc)}
-</style></head><body><div class="w">
+</style><link rel="canonical" href="https://sweeper-check.nextill-pos.workers.dev/"></head><body><div class="w">
 <div class="tag">EIP-7702 · 8 chains · read-only</div>
 <h1>Is a <em>sweeper</em> sitting on your wallet?</h1>
 <p class="lead">Since Pectra, one signature can attach code to a normal wallet (EIP-7702). Attackers use that to install "sweepers" that forward anything you send to their address. Paste an address to see whether a delegation is set on Ethereum, Base, BNB Chain, Arbitrum, OP, Polygon, Gnosis and Unichain. <b>Free.</b> We never ask for keys or seed phrases.</p>
@@ -41,7 +41,7 @@ code{font:13px ui-monospace,monospace;color:var(--acc)}
 <div><h4>Full report · 0.01 USDC</h4><p>Analyses the delegate's bytecode for the sweeper shape (tiny contract + hard-coded forwarding address), checks source verification, gives a risk level and what to do. Up to 20 addresses per report. Paid with USDC on Base from your browser wallet, no gas.</p></div>
 <div><h4>For agents</h4><p><code>GET /api/basic?address=</code> free JSON. <code>GET /v1/check?address=a,b,c</code> via x402 v2 (USDC on Base). See <a href="/openapi.json" style="color:var(--ink)">openapi.json</a>.</p></div>
 </div>
-<footer>Heuristic analysis of public chain data, not a guarantee. If a delegation you did not set shows up, treat the key as compromised and move funds to a new wallet made on a clean device. · <a href="/terms">Terms</a> · Made by <a href="https://madebydevx.com">DevX</a> · payments go to <span style="font-family:ui-monospace,monospace">__PAYTO__</span></footer>
+<footer><a href="/what-is-an-eip-7702-sweeper">What is a 7702 sweeper?</a> · Also free: <a href="https://crypto-link-check.nextill-pos.workers.dev/">Crypto Link Check</a> (is that wallet link real?) · Heuristic analysis of public chain data, not a guarantee. If a delegation you did not set shows up, treat the key as compromised and move funds to a new wallet made on a clean device. · <a href="/terms">Terms</a> · Made by <a href="https://madebydevx.com">DevX</a> · payments go to <span style="font-family:ui-monospace,monospace">__PAYTO__</span></footer>
 </div>
 <script>
 const $=s=>document.querySelector(s),out=$("#out");let last="";
