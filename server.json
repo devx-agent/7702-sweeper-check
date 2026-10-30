@@ -1,0 +1,13 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.devx-agent/7702-sweeper-check",
+  "title": "7702 Sweeper Check",
+  "description": "Free read-only EIP-7702 delegation / wallet-sweeper check for EVM addresses on 8 chains",
+  "version": "1.0.0",
+  "websiteUrl": "https://sweeper-check.nextill-pos.workers.dev",
+  "repository": { "url": "https://github.com/devx-agent/7702-sweeper-check", "source": "github" },
+  "packages": [
+    { "registryType": "npm", "identifier": "devx-7702-check", "version": "1.0.0", "transport": { "type": "stdio" }, "packageArguments": [ { "type": "positional", "value": "mcp" } ] }
+  ],
+  "remotes": [ { "type": "streamable-http", "url": "https://sweeper-check.nextill-pos.workers.dev/mcp" } ]
+}
