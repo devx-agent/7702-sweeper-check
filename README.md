@@ -55,3 +55,4 @@ Made by [DevX](https://madebydevx.com). MIT.
 
 - [What is an EIP-7702 sweeper?](https://sweeper-check.nextill-pos.workers.dev/what-is-an-eip-7702-sweeper)
 - Related free tool: [Crypto Link Check](https://crypto-link-check.nextill-pos.workers.dev/) — is that wallet or exchange link real?
+- Related free tool: [Address Poisoning Check](https://address-poisoning-check.nextill-pos.workers.dev/) — is the address you are about to pay a poisoned lookalike?
