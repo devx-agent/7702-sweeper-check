@@ -1,6 +1,6 @@
 {
   "name": "devx-7702-check",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Free CLI + MCP server: is an EIP-7702 delegation (possible wallet sweeper) set on your EVM address on 8 chains? Read-only, no keys.",
   "type": "module",
   "license": "MIT",
